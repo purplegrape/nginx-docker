@@ -20,19 +20,21 @@ RUN dnf install -y --nodocs --nogpgcheck \
 RUN ln -sf /dev/stdout access.log ;mv access.log $DST/var/log/nginx/
 RUN ln -sf /dev/stderr error.log ;mv error.log $DST/var/log/nginx/
 
-RUN rm -rf $DST/usr/lib64/nginx/modules/*debug.so
+RUN rm -rf $DST/usr/lib64/nginx/modules/*debug.so $DST/etc/nginx/conf.d/default.conf
 RUN rm -rf $DST/etc/dnf $DST/var/cache/* $DST/var/lib/{dnf,rpm} $DST/var/log/*
-
-
-COPY nginx.conf /etc/nginx/
 
 FROM scratch
 LABEL org.opencontainers.image.title=nginx \
       org.opencontainers.image.authors="purplegrape4@gmail.com"
 
 COPY --from=system-build /mnt/sysroot/ /
+COPY nginx.conf /etc/nginx/
+COPY default.conf /etc/nginx/conf.d/
+
+RUN mkdir -p /var/log/nginx ; ln -sf /dev/stdout /var/log/nginx/access.log ; ln -sf /dev/stderr /var/log/nginx/error.log
 
 USER nginx
+VOLUME [ "/var/cache/nginx" ]
 VOLUME [ "/var/www/html" ]
 WORKDIR /var/www/html
 CMD [ "/usr/sbin/nginx" ]
