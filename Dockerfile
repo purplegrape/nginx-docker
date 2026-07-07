@@ -17,7 +17,7 @@ RUN dnf install -y --nodocs --nogpgcheck \
       coreutils-single bash openssl-libs tzdata nginx nginx-module-acme nginx-module-otel ; \
     dnf --installroot $DST clean all
 
-RUN rpm -e --nodeps --noscripts --root=$DST almalinux-repos almalinux-release almalinux-gpg-keys procps-ng systemd systemd-libs systemd-pam ;\
+RUN rpm -e --nodeps --noscripts --root=$DST almalinux-repos almalinux-release almalinux-gpg-keys openssl procps-ng systemd systemd-libs systemd-pam ;\
     rm -rf $DST/etc/yum.repos.d/almalinux* $DST/etc/pki/rpm-gpg/*
 
 RUN rm -rf $DST/usr/lib64/nginx/modules/*debug.so $DST/etc/nginx/conf.d/default.conf
